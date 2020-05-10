@@ -3,6 +3,8 @@ import numpy as np
 from random import randint
 from gesture import DetectGesture
 from handPoseImage import HandPoseImage
+from movment import MovmentGesture
+from collections import deque 
 
 trackerTypes = ['BOOSTING', 'MIL', 'KCF','TLD', 'MEDIANFLOW', 'GOTURN', 'MOSSE', 'CSRT'] #  tracker types
 
@@ -34,13 +36,13 @@ def createTrackerByName(trackerType):
   return tracker
 
 
-cap = cv2.VideoCapture("outpy.avi")
+# cap = cv2.VideoCapture("demoVideo.avi")
+cap = cv2.VideoCapture(0)
 boxes = []
-# i = 0
-# while(i<10):
-#     ret, frame = cap.read()
-#     i = i + 1
-# frame = cv2.flip(frame, 1)
+
+qx = deque()
+qy = deque()
+
 ret, frame = cap.read()
 trackerType = "BOOSTING" 
 hand_cascade = cv2.CascadeClassifier('abcd.xml') # cascade classifire for detecting hand
@@ -49,6 +51,8 @@ frame_width = int(cap.get(3))
 frame_height = int(cap.get(4))
 # out = cv2.VideoWriter('outpy.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (frame_width,frame_height))
 
+width = 0
+height = 0
 while (True):
     # using cascade classifire
 
@@ -64,6 +68,7 @@ while (True):
         newBox = (a,b,c,d)
         boxes.append(newBox) #  if found some hand that append to the boxes list
         newFrame = cv2.rectangle(newFrame, (bbox[0], bbox[1]), (bbox[0]+bbox[2], bbox[1]+bbox[3]), (225,0,0), 2)
+
     cv2.imshow("selected hand object", newFrame)
 
     if cv2.waitKey(1) & 0xFF == 27:  # Esc pressed      
@@ -97,7 +102,15 @@ while cap.isOpened():
         # out.write(saveframe)
         cv2.rectangle(frame, p1, p2, (255, 0, 0), 2, 1)
         subImage = frame[int(newbox[1]): int(newbox[1]+newbox[3]), int(newbox[0]): int(newbox[0]+newbox[2])]#` crop the hand part from the holl image
-        #  to apply gestures recognition code (gesture.py)` need to apply background substraction mothod.....  
+        
+        MovmentGesture.appendToQueue(qx, qy, int(p1[0]+newbox[2]/2),int(p1[1]+newbox[3]/2))
+        width = c
+        height = d
+
+        x_first, x_last, y_first, y_last = MovmentGesture.getFirstAndLast(qx, qy) 
+        frame = cv2.line(frame, (x_first,y_first), (x_last, y_last), (0, 255, 255), 4) 
+        MovmentGesture.drawMessage(frame, x_first, x_last, y_first, y_last, width, height)
+
         cv2.imshow("object tracking", subImage)
         if cv2.waitKey(1) & 0xFF == 27:  # Esc pressed to detect gesture.
           HandPoseImage.getHandGesture(subImage)
