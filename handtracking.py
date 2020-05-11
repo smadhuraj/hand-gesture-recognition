@@ -36,8 +36,8 @@ def createTrackerByName(trackerType):
   return tracker
 
 
-# cap = cv2.VideoCapture("demoVideo.avi")
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture("demoVideo.avi")
+# cap = cv2.VideoCapture(0)
 boxes = []
 
 qx = deque()
@@ -53,6 +53,7 @@ frame_height = int(cap.get(4))
 
 width = 0
 height = 0
+bitSequence = [] # that store the bit sequence of the current gesture when Esc button was presed...
 while (True):
     # using cascade classifire
 
@@ -112,8 +113,10 @@ while cap.isOpened():
         MovmentGesture.drawMessage(frame, x_first, x_last, y_first, y_last, width, height)
 
         cv2.imshow("object tracking", subImage)
+        # give the control signal by pressing Esc button.
         if cv2.waitKey(1) & 0xFF == 27:  # Esc pressed to detect gesture.
-          HandPoseImage.getHandGesture(subImage)
+          bitSequence = HandPoseImage.getHandGesture(subImage) # get the bit sequence of the current hand gestre.
+          print(bitSequence)
           break
         # DetectGesture.findCenterOfMass(subImage)
         # DetectGesture.fingerTipsFind(subImage)
@@ -124,7 +127,7 @@ while cap.isOpened():
 
     # quit on ESC button
     if cv2.waitKey(1) & 0xFF == 27:  # Esc pressed
-      HandPoseImage.getHandGesture()
+      # HandPoseImage.getHandGesture()
       break
     
 cap.release()
