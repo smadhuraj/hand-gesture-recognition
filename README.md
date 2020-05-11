@@ -5,6 +5,14 @@ befour run the application, download the hand pose model:
 OPENPOSE_URL="http://posefs1.perception.cs.cmu.edu/OpenPose/models/"
 HAND_FOLDER="hand/"
 
+
+
+project
+|---->hand
+|       |-->pose_deploy.prototxt
+|       |-->pose_iter_102000.caffemodel
+|
+
 after you download put that folder in root. the folder name should be "hand"
 
 befour run the programe, make sure those packeges are installed in your machine
