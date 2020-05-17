@@ -82,15 +82,17 @@ class HandPoseImage():
                 else:
                     bitSequence.append(0)
 
-        cv2.imshow('Output-Keypoints', frameCopy)
-        cv2.imshow('Output-Skeleton', frame)
+        if(len(bitSequence) == 5):
+            cv2.imshow('Output-Keypoints', frameCopy)
+            cv2.imshow('Output-Skeleton', frame)
 
 
-        cv2.imwrite('Output-Keypoints.jpg', frameCopy)
-        cv2.imwrite('Output-Skeleton.jpg', frame)
+            # cv2.imwrite('Output-Keypoints.jpg', frameCopy)
+            # cv2.imwrite('Output-Skeleton.jpg', frame)
 
-        print("Total time taken : {:.3f}".format(time.time() - t))
+            print("Total time taken : {:.3f}".format(time.time() - t))
 
-        return bitSequence
-
+            return bitSequence
+        else:
+            print('some fingers are not ditect crearly.. please try again..')
         # cv2.waitKey(0)

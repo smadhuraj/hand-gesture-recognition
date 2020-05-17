@@ -1,6 +1,7 @@
 from tkinter import *
 import cv2
 import PIL.Image, PIL.ImageTk
+import threading
 
 
 def onClickStart():
@@ -27,14 +28,21 @@ def main_screen():
     # buttonTrack.configure(highlightbackground='')
     buttonTrack.place(x=150, y=70)
 
-
     buttonStop = Button(text="Stop", width= 10, command=lambda: onClickStop())
     buttonStop.configure(highlightbackground='red')
     buttonStop.place(x=250, y=70)
 
     Label(text="Realtime video feed", font = ("calibri", 25)).place(x=50, y =100)
+    cap = cv2.VideoCapture(0)
     canvasMain = Canvas(screen, width= 650, height= 400)
-    canvasMain.configure(background='gray')
+    #-------------------------------------------------------------------
+    # put the realtime video on canvasmain	using tread
+    # Create a Thread with a function without with arguments
+    th = threading.Thread(target=update, args=(cap, canvasMain ))
+
+    th.start()# run the created thread.
+
+    # canvasMain.configure(background='gray')
     canvasMain.place(x=50, y=135)
 
     Label(text="Captured image", font = ("calibri", 25)).place(x=750, y =100)
@@ -43,5 +51,15 @@ def main_screen():
     canvas.place(x=750, y=135)
  
     screen.mainloop()
+    th.join()
+
+def update(cap, canvasMain): # function that return the realtime video feed on web cam.
+    while(1):
+        ret, frame = cap.read()
+        frame = cv2.resize(frame, (650, 400))
+        photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(frame))
+        canvasMain.create_image(0, 0, image = photo, anchor = NW)
+
+
 
 main_screen()
