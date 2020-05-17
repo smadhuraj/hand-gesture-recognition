@@ -1,8 +1,12 @@
 from tkinter import *
+import cv2
+import PIL.Image, PIL.ImageTk
 
 
 def onClickStart():
     print('start is presed..!')
+
+
 def onClickTrack():
     print('track is presed..!')
 def onClickStop():
@@ -29,9 +33,9 @@ def main_screen():
     buttonStop.place(x=250, y=70)
 
     Label(text="Realtime video feed", font = ("calibri", 25)).place(x=50, y =100)
-    canvas = Canvas(screen, width= 650, height= 400)
-    canvas.configure(background='gray')
-    canvas.place(x=50, y=135)
+    canvasMain = Canvas(screen, width= 650, height= 400)
+    canvasMain.configure(background='gray')
+    canvasMain.place(x=50, y=135)
 
     Label(text="Captured image", font = ("calibri", 25)).place(x=750, y =100)
     canvas = Canvas(screen, width= 200, height= 200)
