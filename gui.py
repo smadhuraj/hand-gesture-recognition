@@ -2,6 +2,7 @@ from tkinter import *
 import cv2
 import PIL.Image, PIL.ImageTk
 import threading
+from handtracking import HandTracking
 
 
 def onClickStart():
@@ -33,33 +34,30 @@ def main_screen():
     buttonStop.place(x=250, y=70)
 
     Label(text="Realtime video feed", font = ("calibri", 25)).place(x=50, y =100)
+    # cap = cv2.VideoCapture("demoVideo.avi")
     cap = cv2.VideoCapture(0)
     canvasMain = Canvas(screen, width= 650, height= 400)
     #-------------------------------------------------------------------
     # put the realtime video on canvasmain	using tread
     # Create a Thread with a function without with arguments
-    th = threading.Thread(target=update, args=(cap, canvasMain ))
-
-    th.start()# run the created thread.
+    # th = threading.Thread(target=update, args=(cap, canvasMain ))
+    canvasMain.place(x=50, y=135)
 
     # canvasMain.configure(background='gray')
-    canvasMain.place(x=50, y=135)
+    
 
     Label(text="Captured image", font = ("calibri", 25)).place(x=750, y =100)
     canvas = Canvas(screen, width= 200, height= 200)
     canvas.configure(background='gray')
     canvas.place(x=750, y=135)
- 
+    th_1 = threading.Thread(target=update, args= (cap, canvasMain, canvas))
+    th_1.start()
+    
     screen.mainloop()
-    th.join()
-
-def update(cap, canvasMain): # function that return the realtime video feed on web cam.
-    while(1):
-        ret, frame = cap.read()
-        frame = cv2.resize(frame, (650, 400))
-        photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(frame))
-        canvasMain.create_image(0, 0, image = photo, anchor = NW)
-
-
+    th_1.join()
+    
+    
+def update(cap, canvasMain, canvas): # function that return the realtime video feed on web cam.
+    HandTracking().mainFunction(cap, canvasMain, canvas)
 
 main_screen()
