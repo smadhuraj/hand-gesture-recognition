@@ -7,12 +7,13 @@ from movment import MovmentGesture
 from collections import deque 
 import PIL.Image, PIL.ImageTk
 from tkinter import *
+import math
 class HandTracking:
 
   boxes = []
   qx = deque()
   qy = deque()
-
+  sunImage = None
   trackerType = "BOOSTING" 
   hand_cascade = cv2.CascadeClassifier('abcd.xml') # cascade classifire for detecting hand
   newBox = (0,0,0,0)
@@ -58,7 +59,7 @@ class HandTracking:
 
 
 
-  def mainFunction(self, cap, canvasMain, canvas):
+  def mainFunction(self, cap, canvasMain, canvas, movment_lable):
     ret, frame = cap.read()
     while (True):
         _, newFrame = cap.read() # read the video frame
@@ -90,6 +91,7 @@ class HandTracking:
     for bbox in self.boxes:
         multiTracker.add(self.createTrackerByName(self.trackerType), frame, bbox)
 
+    movementObj = MovmentGesture()
     # Process video and track objects
     while cap.isOpened():
         success, frame = cap.read()
@@ -99,6 +101,7 @@ class HandTracking:
         # get updated location of objects in subsequent frames
         success, bboxes = multiTracker.update(frame)
 
+
         # draw tracked objects
         for i, newbox in enumerate(bboxes):
             correction_length = 60 # int((newbox[2]+newbox[3])/8)
@@ -107,7 +110,7 @@ class HandTracking:
             # saveframe = frame
             # out.write(saveframe)
             cv2.rectangle(frame, p1, p2, (255, 0, 0), 2, 1)
-            subImage = frame[int(newbox[1]): int(newbox[1]+newbox[3]), int(newbox[0]): int(newbox[0]+newbox[2])]#` crop the hand part from the holl image
+            self.subImage = frame[int(newbox[1]): int(newbox[1]+newbox[3]), int(newbox[0]): int(newbox[0]+newbox[2])]#` crop the hand part from the holl image
             
             MovmentGesture.appendToQueue(self.qx, self.qy, int(p1[0]+newbox[2]/2),int(p1[1]+newbox[3]/2))
             width = c
@@ -115,19 +118,19 @@ class HandTracking:
 
             x_first, x_last, y_first, y_last = MovmentGesture.getFirstAndLast(self.qx, self.qy) 
             frame = cv2.line(frame, (x_first,y_first), (x_last, y_last), (0, 255, 255), 4) 
-            MovmentGesture.drawMessage(frame, x_first, x_last, y_first, y_last, width, height)
+            movementObj.drawMessage(frame, x_first, x_last, y_first, y_last, width, height, movment_lable)
 
-            subImage = cv2.resize(subImage, (200, 200))
-            photoSub = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(subImage))
+            self.subImage = cv2.resize(self.subImage, (200, 200))
+            photoSub = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(self.subImage))
             canvas.create_image(0, 0, image = photoSub, anchor = NW)
 
             # cv2.imshow("object tracking", subImage)
 
             # give the control signal by pressing Esc button.
-            if cv2.waitKey(1) & 0xFF == 27:  # Esc pressed to detect gesture.
-              bitSequence = HandPoseImage.getHandGesture(subImage) # get the bit sequence of the current hand gestre.
-              print(bitSequence)
-              break
+            # if cv2.waitKey(1) & 0xFF == 27:  # Esc pressed to detect gesture.
+            #   bitSequence = HandPoseImage.getHandGesture(self.subImage) # get the bit sequence of the current hand gestre.
+            #   print(bitSequence)
+            #   break
 
         # show frame
         frame = cv2.resize(frame, (650, 400))
@@ -142,6 +145,21 @@ class HandTracking:
           break
     cap.release()
     cv2.destroyAllWindows()
+
+  def controlSignal(self, bit_seq, device_no):
+    bitSequence = HandPoseImage.getHandGesture(self.subImage) # get the bit sequence of the current hand gestre.
+    print(bitSequence)
+    bit_seq.configure(text= bitSequence)
+    num = self.convertBinaryToDecimal(bitSequence)
+    device_no.configure(text= num)
+    return
+  
+  def convertBinaryToDecimal(self, array):
+    sum = 0
+    for i in range(5):
+      sum = sum + array[i] * math.pow(2, 4-i)
+    return sum
+
 #run without gui.....
 # if __name__ == "__main__":
 #   HandTracking().mainFunction()
