@@ -83,9 +83,8 @@ class HandPoseImage():
                     bitSequence.append(0)
 
         if(len(bitSequence) == 5):
-            cv2.imshow('Output-Keypoints', frameCopy)
+            # cv2.imshow('Output-Keypoints', frameCopy)
             cv2.imshow('Output-Skeleton', frame)
-
 
             # cv2.imwrite('Output-Keypoints.jpg', frameCopy)
             # cv2.imwrite('Output-Skeleton.jpg', frame)

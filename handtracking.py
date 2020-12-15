@@ -10,6 +10,10 @@ from tkinter import *
 import math
 class HandTracking:
 
+  lst = [None] * 32
+  for i in range(32):
+    lst[i] = 'off'
+
   boxes = []
   qx = deque()
   qy = deque()
@@ -146,18 +150,28 @@ class HandTracking:
     cap.release()
     cv2.destroyAllWindows()
 
-  def controlSignal(self, bit_seq, device_no):
+  def controlSignal(self, bit_seq, device_no, status):
     bitSequence = HandPoseImage.getHandGesture(self.subImage) # get the bit sequence of the current hand gestre.
     print(bitSequence)
     bit_seq.configure(text= bitSequence)
-    num = self.convertBinaryToDecimal(bitSequence)
+    num = self.convertBinaryToDecimal(bitSequence, status)
     device_no.configure(text= num)
     return
   
-  def convertBinaryToDecimal(self, array):
+  def convertBinaryToDecimal(self, array, status):
     sum = 0
+    tempVar = ""
     for i in range(5):
       sum = sum + array[i] * math.pow(2, 4-i)
+    sum = int(sum)
+    if(self.lst[sum] == 'off'):
+      self.lst[sum] = 'on'
+      tempVar = self.lst[sum]
+    else:
+      self.lst[sum] = 'off'
+      tempVar = self.lst[sum]
+    print(self.lst[sum])
+    status.configure(text= tempVar)
     return sum
 
 #run without gui.....

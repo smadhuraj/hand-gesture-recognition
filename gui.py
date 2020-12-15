@@ -5,15 +5,15 @@ import threading
 from handtracking import HandTracking
 
 handTrackingObject = HandTracking()
-# bit_seq = None
+
 
 def onClickStart():
     print('start is presed..!')
 
 
-def onClickTrack(bit_seq, device_no):
+def onClickTrack(bit_seq, device_no, status):
     print('track is presed..!')
-    handTrackingObject.controlSignal(bit_seq, device_no)
+    handTrackingObject.controlSignal(bit_seq, device_no, status)
 
 def onClickStop():
     SystemExit()
@@ -24,14 +24,14 @@ def main_screen():
     screen.geometry("1000x700")
     screen.title("Hand gesture recognition system")
 
-    Label(text="Wellocome To Hand Gesture Recognition System.", font = ("calibri", 35)).pack()
+    Label(text="Welcome To Hand Gesture Recognition System.", font = ("calibri", 35)).pack()
 
 
 
     Label(text="Realtime video feed", font = ("calibri", 25)).place(x=50, y =100)
 
-    cap = cv2.VideoCapture("demoVideo.avi")
-    # cap = cv2.VideoCapture(0)
+    # cap = cv2.VideoCapture("demoVideo.avi")
+    cap = cv2.VideoCapture(0)
     canvasMain = Canvas(screen, width= 650, height= 400)
     #-------------------------------------------------------------------
     # put the realtime video on canvasmain	using tread
@@ -62,11 +62,17 @@ def main_screen():
     device_no.place(x=240, y =600)
 
 
+    Label(text="Status   : ", font = ("calibri", 25)).place(x=400, y =580)
+    status = Label(font = ("calibri", 25))
+    status.configure(text="  ")
+    status.place(x=500, y =580)
+
+
     buttonStrat = Button(text="Start", width= 10, command=lambda: onClickStart())
     buttonStrat.configure(highlightbackground='green')
     buttonStrat.place(x=50, y=70)
 
-    buttonTrack = Button(text="Track", width= 10, command=lambda: onClickTrack(bit_seq, device_no))
+    buttonTrack = Button(text="Track", width= 10, command=lambda: onClickTrack(bit_seq, device_no, status))
     # buttonTrack.configure(highlightbackground='')
     buttonTrack.place(x=150, y=70)
 

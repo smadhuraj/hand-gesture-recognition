@@ -58,9 +58,12 @@ def createTrackerByName(trackerType):
 
 
 # def mainFunction(self, cap, canvasMain, canvas):
-
-# cap = cv2.VideoCapture("demoVideo.avi")
-cap = cv2.VideoCapture(0)
+# cap = cv2.VideoCapture("test.avi")
+cap = cv2.VideoCapture("demoVideo.avi")
+# cap = cv2.VideoCapture(0)
+frame_width = int(cap.get(3))
+frame_height = int(cap.get(4))
+# out = cv2.VideoWriter('test.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 5, (frame_width,frame_height))
 ret, frame = cap.read()
 while (True):
     _, newFrame = cap.read() # read the video frame
@@ -101,6 +104,10 @@ while cap.isOpened():
     
     # get updated location of objects in subsequent frames
     success, bboxes = multiTracker.update(frame)
+
+
+    # out.write(frame)
+
 
     # draw tracked objects
     for i, newbox in enumerate(bboxes):

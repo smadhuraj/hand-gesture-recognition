@@ -48,7 +48,8 @@ class MovmentGesture:
 
         return x_first, x_last, y_first, y_last
 
-    def drawMessage(self, frame, x_1, x_2, y_1, y_2, widht, hight, movment_lable):
+    # def drawMessage(self, frame, x_1, x_2, y_1, y_2, widht, hight, movment_lable):
+    def drawMessage(self, frame, x_1, x_2, y_1, y_2, widht, hight):
         # distance = math.sqrt(math.pow((x_1-x_2),2) + math.pow((y_1-y_2), 2))
         distance_x = math.sqrt(math.pow((x_1-x_2), 2))
         distance_y = math.sqrt(math.pow((y_1-y_2), 2))
@@ -57,22 +58,22 @@ class MovmentGesture:
         if((distance_x < distance_y) and mean < distance_y):
             if(y_1 < y_2):
                 cv2.putText(frame, "UP", (800,110), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0,255),3)
-                movment_lable.configure(text="UP")
+                # movment_lable.configure(text="UP")
                 self.COUNT += 1
                 print('Temparature of the AC : ',self.COUNT)
             else:
                 cv2.putText(frame, "DOWN", (800,110), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0,255),3)
-                movment_lable.configure(text="DOWN")
+                # movment_lable.configure(text="DOWN")
                 self.COUNT -= 1
                 print('Temparature of the AC : ',self.COUNT)
         elif((distance_x > distance_y) and mean < distance_x):
             if(x_1<x_2):
                 cv2.putText(frame, "LEFT", (800,110), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0,255),3)
-                movment_lable.configure(text="Left")
+                # movment_lable.configure(text="Left")
                 # print("Mouse cursor go LEFT side")
             else:
                 cv2.putText(frame, "RIGHT", (800,110), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0,255),3)
-                movment_lable.configure(text="RIGHT")
+                # movment_lable.configure(text="RIGHT")
                 # print("Mouse cursor go RIGHT side")
-        else:
-            movment_lable.configure(text="")
+        # else:
+        #     movment_lable.configure(text="")
